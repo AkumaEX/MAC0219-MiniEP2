@@ -1,0 +1,78 @@
+Nome: JULIO KENJI UEDA NUSP: 9298281
+
+Mini Exercício Programa: Verificação usando Pthreads
+
+1.CÓDIGO
+
+    Linguagem de programação utilizado: C
+    Para executar o programa: $ make run
+
+2.FUNCIONAMENTO DO PROGRAMA
+
+    Cada Sapo ou Rã é uma 'struct' que possui:
+        - frog_id: um inteiro que o identifica nas pedras;
+        - position: um inteiro para guardar a posição nas pedras;
+        - thread: a thread do sapo;
+
+    As pedras no lago são representadas por um vetor de inteiros, onde cada inteiro é uma frog_id;
+
+    Execução do Programa:
+        - pede ao usuário o número de pedras no lago, além da quantidade de rãs e sapos;
+        - cria as pedras no lago como um vetor de 'int', onde cada inteiro é uma 'frog_id';
+        - cria as rãs e sapos como um vetor de 'frogs';
+        - inicia a função 'jump_to_left()' para sapos e 'jump_to_right()' para as rãs. As funções possuem uma barreira
+          de sincronização, que iniciam o processo de pulo quando todas as threads forem criadas;
+        - Cada vez que uma thread assume o mutex, ele tenta realizar um pulo. No caso de sucesso o programa reinicia o
+          contador pulos 'fail_jump', imprime o estado atual do lago (a posicão visual dos sapos) e verifica se entrou
+          em DEADLOCK. No caso de falha incrementa o valor do contador;
+        - O gerenciamento dos animais é feito por meio de um contador global 'fail_jump'. Se o contador ultrapassar o
+          valor de 100000000 (MAX_TRY) o programa termina com a mensagem
+          'Parado por ultrapassar o numero de tentativas!'. A verificação é realizada pela função 'get_working()'.
+        - O gerenciamento dos animais também é feito através de uma função 'verify_deadlock()', que verifica o estado da
+          lagoa e dos sapos após cada pulo realizado.
+
+    Saída do Programa:
+
+    Cada linha representa o estado do lago, onde a primeira linha é o estado inicial quando todas as threads foram
+    criadas e cada linha abaixo mostra a evolução do programa a cada salto do animal com sucesso.
+    Segue abaixo a saída do programa para uma lagoa com 7 pedras, 3 Rãs e 3 Sapos:
+
+    ====================================================================================================================
+
+    { 0 } { 1 } { 2 } (   ) [ 4 ] [ 5 ] [ 6 ]
+    { 0 } { 1 } (   ) { 2 } [ 4 ] [ 5 ] [ 6 ]
+    { 0 } { 1 } [ 4 ] { 2 } (   ) [ 5 ] [ 6 ]
+    { 0 } { 1 } [ 4 ] { 2 } [ 5 ] (   ) [ 6 ]
+    { 0 } { 1 } [ 4 ] (   ) [ 5 ] { 2 } [ 6 ]
+    { 0 } (   ) [ 4 ] { 1 } [ 5 ] { 2 } [ 6 ]
+    (   ) { 0 } [ 4 ] { 1 } [ 5 ] { 2 } [ 6 ]
+    [ 4 ] { 0 } (   ) { 1 } [ 5 ] { 2 } [ 6 ]
+    [ 4 ] { 0 } [ 5 ] { 1 } (   ) { 2 } [ 6 ]
+    [ 4 ] { 0 } [ 5 ] { 1 } [ 6 ] { 2 } (   )
+    [ 4 ] { 0 } [ 5 ] { 1 } [ 6 ] (   ) { 2 }
+    [ 4 ] { 0 } [ 5 ] (   ) [ 6 ] { 1 } { 2 }
+    [ 4 ] (   ) [ 5 ] { 0 } [ 6 ] { 1 } { 2 }
+    [ 4 ] [ 5 ] (   ) { 0 } [ 6 ] { 1 } { 2 }
+    [ 4 ] [ 5 ] [ 6 ] { 0 } (   ) { 1 } { 2 }
+    [ 4 ] [ 5 ] [ 6 ] (   ) { 0 } { 1 } { 2 }
+    Parado por DEADLOCK
+    Pulos fracassados: 8462
+    QUEBRA-CABECA FINALIZADO!
+    Numero de tentativas: 2149
+    Maximo de pulos fracassados: 441837
+    Tempo decorrido: 7707859253 nanossegundos
+
+    ====================================================================================================================
+
+    Significados:
+    { 1 }   : é uma Rã com frog_id = 1;
+    [ 4 ]   : é um Sapo com com frog_id = 4;
+    (   )   : é uma pedra vazia;
+    { 0 } { 1 } { 2 } (   ) [ 4 ] [ 5 ] [ 6 ] : é um estado do lago, com três Rãs à esquerda, uma pedra vazia ao meio e
+                                                  três sapos à direita.
+
+3.CONCLUSÃO
+
+    A solução deste problema não é de fácil solução, acabando com DEADLOCK na maioria das vezes. O comportamento das
+    threads é facilmente visualizado adicionando muitas pedras vazias entre as rãs e os sapos (por exemplo,
+    Número de Pedras = 20, Rãs = 3 e Sapos = 3) para evitar o aglomerado de animais e o consequentemente o DEADLOCK.
